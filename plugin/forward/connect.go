@@ -102,6 +102,8 @@ func (p *Proxy) Connect(ctx context.Context, state request.Request, opts options
 		conn.UDPSize = 512
 	}
 
+	RequestCount.WithLabelValues(p.addr).Add(1)
+
 	conn.SetWriteDeadline(time.Now().Add(maxTimeout))
 	reqTime := time.Now()
 	if err := conn.WriteMsg(state.Req); err != nil {
@@ -132,7 +134,6 @@ func (p *Proxy) Connect(ctx context.Context, state request.Request, opts options
 		rc = strconv.Itoa(ret.Rcode)
 	}
 
-	RequestCount.WithLabelValues(p.addr).Add(1)
 	RcodeCount.WithLabelValues(rc, p.addr).Add(1)
 	RequestDuration.WithLabelValues(p.addr).Observe(time.Since(start).Seconds())
 
