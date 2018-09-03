@@ -97,6 +97,7 @@ If monitoring is enabled (via the *prometheus* directive) then the following met
 
 * `coredns_forward_request_duration_seconds{to}` - duration per upstream interaction.
 * `coredns_forward_request_count_total{to}` - query count per upstream.
+* `coredns_forward_request_failure_count_total{to}` - failed queries per upstream.
 * `coredns_forward_response_rcode_total{to, rcode}` - count of RCODEs per upstream.
 * `coredns_forward_healthcheck_failure_count_total{to}` - number of failed health checks per upstream.
 * `coredns_forward_healthcheck_broken_count_total{}` - counter of when all upstreams are unhealthy,

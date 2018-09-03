@@ -91,6 +91,15 @@ func (p *Proxy) Connect(ctx context.Context, state request.Request, opts options
 		proto = state.Proto()
 	}
 
+	var err error
+	defer func() {
+		if err != nil && err != dns.ErrTruncated && err != ErrCachedClosed {
+			RequestFailureCount.WithLabelValues(p.addr).Add(1)
+		}
+	}()
+
+	RequestCount.WithLabelValues(p.addr).Add(1)
+
 	conn, cached, err := p.transport.Dial(proto)
 	if err != nil {
 		return nil, err
@@ -104,10 +113,10 @@ func (p *Proxy) Connect(ctx context.Context, state request.Request, opts options
 
 	conn.SetWriteDeadline(time.Now().Add(maxTimeout))
 	reqTime := time.Now()
-	if err := conn.WriteMsg(state.Req); err != nil {
+	if err = conn.WriteMsg(state.Req); err != nil {
 		conn.Close() // not giving it back
 		if err == io.EOF && cached {
-			return nil, ErrCachedClosed
+			err = ErrCachedClosed
 		}
 		return nil, err
 	}
@@ -118,7 +127,7 @@ func (p *Proxy) Connect(ctx context.Context, state request.Request, opts options
 		p.updateRtt(maxTimeout)
 		conn.Close() // not giving it back
 		if err == io.EOF && cached {
-			return nil, ErrCachedClosed
+			err = ErrCachedClosed
 		}
 		return ret, err
 	}
@@ -132,7 +141,6 @@ func (p *Proxy) Connect(ctx context.Context, state request.Request, opts options
 		rc = strconv.Itoa(ret.Rcode)
 	}
 
-	RequestCount.WithLabelValues(p.addr).Add(1)
 	RcodeCount.WithLabelValues(rc, p.addr).Add(1)
 	RequestDuration.WithLabelValues(p.addr).Observe(time.Since(start).Seconds())
 

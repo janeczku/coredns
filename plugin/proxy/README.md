@@ -95,6 +95,8 @@ If monitoring is enabled (via the *prometheus* directive) then the following met
   upstream interaction.
 * `coredns_proxy_request_count_total{server, proto, proto_proxy, family, to}` - query count per
   upstream.
+* `coredns_proxy_request_failure_count_total{server, proto, proto_proxy, family, to}` - failed queries
+  per upstream.
 
 Where `proxy_proto` is the protocol used (`dns` or `grpc`) and `to` is **TO**
 specified in the config, `proto` is the protocol used by the incoming query ("tcp" or "udp"), family

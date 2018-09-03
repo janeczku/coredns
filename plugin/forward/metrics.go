@@ -16,6 +16,12 @@ var (
 		Name:      "request_count_total",
 		Help:      "Counter of requests made per upstream.",
 	}, []string{"to"})
+	RequestFailureCount = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace: plugin.Namespace,
+		Subsystem: "forward",
+		Name:      "request_failure_count_total",
+		Help:      "Counter of failed requests per upstream.",
+	}, []string{"to"})
 	RcodeCount = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Namespace: plugin.Namespace,
 		Subsystem: "forward",

@@ -16,6 +16,12 @@ var (
 		Name:      "request_count_total",
 		Help:      "Counter of requests made per protocol, proxy protocol, family and upstream.",
 	}, []string{"server", "proto", "proxy_proto", "family", "to"})
+	RequestFailureCount = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace: plugin.Namespace,
+		Subsystem: "proxy",
+		Name:      "request_failure_count_total",
+		Help:      "Counter of failed requests per protocol, proxy protocol, family and upstream.",
+	}, []string{"server", "proto", "proxy_proto", "family", "to"})
 	RequestDuration = prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Namespace: plugin.Namespace,
 		Subsystem: "proxy",
